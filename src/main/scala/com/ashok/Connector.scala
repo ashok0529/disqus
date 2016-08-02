@@ -32,7 +32,7 @@ object Connector extends App{
   val auth_url_final = s"$auth_url?client_id=$API_KEY&scope=read,write&response_type=code&redirect_uri=$redirect_url/oauth_redict"
 
 
-  val content:JsonNode = getWithPlay(list_posts_url)
+  val content:JsonNode = HttpConnector.getWithPlay(list_posts_url)
   println(content.asText())
   var codeResult = -1
   codeResult = content.get("code").asInt(-2)
@@ -91,23 +91,6 @@ object Connector extends App{
 
 
 
-  def get(url: String) = scala.io.Source.fromURL(list_threads_url).mkString
-  def getWithPlay(url:String) = {
-    val config = new NingAsyncHttpClientConfigBuilder(DefaultWSClientConfig()).build()
-    val builder = new AsyncHttpClientConfig.Builder(config)
-    val wsClient:WSClient = new NingWSClient(builder.build())
-    /*
-    val complexRequest: WSRequest =
-      request.withHeaders("Accept" -> "application/json")
-        .withRequestTimeout(10000.millis)
-        .withQueryString("search" -> "play")
-     */
-    val futureResponse: Future[WSResponse] = wsClient.url(url).get()
-    val result = Await.result(futureResponse, Duration.Inf)
-
-    Json.parse(result.body)
-    //Json.toJson(result.body)
-  }
 }
 
 case class DisqusCursor(val prev:String,val hasNext:Boolean,val next:String,val hasPrev:Boolean,val id:String,val more:Boolean)
