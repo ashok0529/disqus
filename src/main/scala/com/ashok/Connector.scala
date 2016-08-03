@@ -35,6 +35,11 @@ object Connector extends App{
   //ASHOK APP
 
 
+  //MONGO
+  val MONGO_HOST:String = "mongomaster"
+  val mongoConnector:MongoConnector  = new MongoConnector()
+  mongoConnector.connect(MONGO_HOST)
+
   val content:JsonNode = HttpConnector.getWithPlay(list_posts_url)
   println(content.asText())
   var codeResult = -1
@@ -73,11 +78,20 @@ object Connector extends App{
         val createdAt:String = thisNode.get("createdAt").asText("Unknown")
         val id:String = thisNode.get("id").asText("0")
         val authorNode:JsonNode = thisNode.get("author")
-        val userName:String = authorNode.get("username").asText("Unknown")
-        val profileURL:String = authorNode.get("profileUrl").asText("Unknown")
-        val authorId:String = authorNode.get("id").asText("0")
-        val aboutAuthor:String = authorNode.get("about").asText("")
-        val authorName:String = authorNode.get("name").asText("")
+        var userName:String = ""
+        var profileURL:String =  ""
+        var authorId:String = ""
+        var aboutAuthor:String = ""
+        var authorName:String = ""
+        if(authorNode != null){
+          userName = authorNode.get("username").asText("Unknown")
+          profileURL = authorNode.get("profileUrl").asText("Unknown")
+          authorId = authorNode.get("id").asText("0")
+          aboutAuthor= authorNode.get("about").asText("")
+          authorName = authorNode.get("name").asText("")
+        }
+
+
         val df:DisqusPost = DisqusPost(forum,isDeleted, isFlagged,dislikes,message,createdAt,
             userName,profileURL,authorId,aboutAuthor,authorName)
 
