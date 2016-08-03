@@ -22,6 +22,7 @@ import play.api.libs.ws._
 
 object Connector extends App{
   println("In Connector")
+  //ASH APP
   val API_KEY="2XH0ECZ3XiObj724Ita6yTydSsF0jbJyCeP8yHYfwj7c6jWcD0jBaaDhKI19FX3p"
   val API_SECRET="nvf7HHACyAdaDKw5Pza5RPtZMZtoM1SffOvKXP49Ckme6re0bxDvoGPCDfmjAwAy"
   val auth_url = "https://disqus.com/api/oauth/2.0/authorize"
@@ -30,6 +31,8 @@ object Connector extends App{
   val list_threads_url = s"https://disqus.com/api/3.0/trends/listThreads.json?api_key=$API_KEY"
   val list_posts_url = s"https://disqus.com/api/3.0/posts/list.json?api_key=$API_KEY"
   val auth_url_final = s"$auth_url?client_id=$API_KEY&scope=read,write&response_type=code&redirect_uri=$redirect_url/oauth_redict"
+
+  //ASHOK APP
 
 
   val content:JsonNode = HttpConnector.getWithPlay(list_posts_url)
