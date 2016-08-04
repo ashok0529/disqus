@@ -13,6 +13,17 @@ object LoopConnector extends App {
     apps
   }
 
+  def getDataAndPersist() = {
+    //Loop over apps
+    //For Each App call method in Connector. This method will procure data and write to persistence store (Mongo)
+    //N times for each app. Then sleep for one hour.
+    //at end of each loop remember to write PREV to some file (in this case just write to mongo)
+    val apps:Vector[DisqusApp] = createApps()
+    for(apps:DisqusApp <- apps){
+
+    }
+
+  }
   def test ={
     println("Begin Testing")
     val apps = createApps
