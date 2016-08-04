@@ -1,5 +1,7 @@
 package com
 
+import org.mongodb.scala._
+
 /**
   * Created by ashok on 8/4/2016.
   */
@@ -10,9 +12,11 @@ package object ashok {
   val scope = "read,write"
   val redirect_url = "http://www.yahoo.com"
   val list_threads_url = s"https://disqus.com/api/3.0/trends/listThreads.json?api_key=$API_KEY"
-  val LIST_POSTS_URL = s"https://disqus.com/api/3.0/posts/list.json?api_key=$API_KEY"
+  val LIST_POSTS_URL = "https://disqus.com/api/3.0/posts/list.json?api_key="
   val auth_url_final = s"$auth_url?client_id=$API_KEY&scope=read,write&response_type=code&redirect_uri=$redirect_url/oauth_redict"
 
 
   val MONGO_HOST:String = "mongomaster"
+
+  val nextDocFinder:Document = Document("next" -> "/.*/")
 }

@@ -33,7 +33,6 @@ object Connector extends App{
     println(content.asText())
     var codeResult = -1
     codeResult = content.get("code").asInt(-2)
-
     val cursorNode:JsonNode = content.get("cursor")
     val hasNext:Boolean = cursorNode.get("hasNext").asBoolean(false)
     val hasPrev:Boolean = cursorNode.get("hasPrev").asBoolean(false)
@@ -41,7 +40,6 @@ object Connector extends App{
     val cursorId:String = cursorNode.get("id").asText("")
     val prev:String = cursorNode.get("prev").asText("")
     val more:Boolean = cursorNode.get("more").asBoolean(false)
-
     val dc:DisqusCursor = new DisqusCursor(prev,hasNext,next,hasPrev,cursorId,more)
     println("***** This Cursor : **** " + dc.toString)
     //val cursorIter:Iterator[String] = cursorNode.fieldNames().asScala
@@ -50,9 +48,6 @@ object Connector extends App{
       val thisVal:String = cursorNode.get(thisNode).asText()
       println(s"This NODE:: $thisNode, $thisVal")
     }*/
-
-
-
     val responseNode:JsonNode = content.get("response")
     if(responseNode.isArray()){
       for(i:Int <- 0 until responseNode.size()){
@@ -79,8 +74,6 @@ object Connector extends App{
             aboutAuthor= authorNode.get("about").asText("")
             authorName = authorNode.get("name").asText("")
           }
-
-
           val df:DisqusPost = DisqusPost(forum,isDeleted, isFlagged,dislikes,message,createdAt,
             userName,profileURL,authorId,aboutAuthor,authorName)
 

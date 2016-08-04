@@ -3,6 +3,7 @@ package com.ashok
 
 import java.util.concurrent.CountDownLatch
 
+import org.mongodb.scala.result.DeleteResult
 import org.mongodb.scala.{Completed, Document, FindObservable, MongoClient, MongoCollection, MongoDatabase, Observable, Observer}
 
 /**
@@ -10,6 +11,7 @@ import org.mongodb.scala.{Completed, Document, FindObservable, MongoClient, Mong
   */
 object MongoConnector {
   var collection:MongoCollection[Document] = null
+  var collection_meta:MongoCollection[Document] = null
    def connect(host:String) = {
      var connected:Boolean = true
       println(s"Attempting connection to $host")
@@ -19,12 +21,12 @@ object MongoConnector {
         val mongoClient: MongoClient = MongoClient(url)
         val database: MongoDatabase = mongoClient.getDatabase("disqusdb")
         collection = database.getCollection("post")
+        collection_meta = database.getCollection("post_meta")
       }catch{
         case e:Exception  => {
           println(s"Error connecting to Host $host " + e.toString)
           connected = false
         }
-
         case e:Error => {
           println(s"Error connecting to Host $host " + e.toString)
           connected = false
@@ -32,27 +34,30 @@ object MongoConnector {
           System.exit(1)
       }
       if(connected) println("Connected")
-
   }
 
   def insertDoc(doc:Document): Unit ={
-    val observable: Observable[Completed] = collection.insertOne(doc)
-    observable.subscribe(new Observer[Completed] {
-      override def onNext(result: Completed): Unit = println("Inserted")
+    MongoHelpers.insertSync(collection,doc)
+  }
+
+  def fetchNextCursor():String = {
+    var nextCursor:String = ""
+    val latch = new CountDownLatch(1)
+    val nextVal:FindObservable[String] = collection_meta.find(nextDocFinder)
+    nextVal.subscribe(new Observer[String]{
+      override def onNext(result: String): Unit = { nextCursor = result; latch.countDown()}
       override def onError(e: Throwable): Unit = println(" \n\nFailed " + e + "\n\n")
       override def onComplete(): Unit = println("Completed")
     })
+    latch.await()
+    nextCursor
   }
 
-  def fetchPrev():String = {
-    var prev:String = ""
-    val prevVal:FindObservable[Document] = collection.find()
-    prev
-  }
-
-  def writePrev(prev:String) = {
-    val doc: Document = Document("prev" -> prev)
-    val observable: Observable[Completed] = collection.insertOne(doc)
+  def writeNextCursor(next:String) = {
+    //first remove
+    MongoHelpers.deleteSync(collection_meta,nextDocFinder)
+    val doc: Document = Document("nextcursor" -> next)
+    val observable: Observable[Completed] = collection_meta.insertOne(doc)
   }
   def fetchCount() = {
     val latch = new CountDownLatch(1)
@@ -87,6 +92,7 @@ object MongoConnector {
     connect("mongomaster")
     fetchCount()
   }
+
 
 
 
