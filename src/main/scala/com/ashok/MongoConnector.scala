@@ -3,6 +3,9 @@ package com.ashok
 
 import java.util.concurrent.CountDownLatch
 
+import com.mongodb.{BasicDBObject, DBObject}
+import org.bson.{BSON, BSONObject}
+import org.mongodb.scala.bson.BsonRegularExpression
 import org.mongodb.scala.result.DeleteResult
 import org.mongodb.scala.{Completed, Document, FindObservable, MongoClient, MongoCollection, MongoDatabase, Observable, Observer}
 
@@ -41,45 +44,25 @@ object MongoConnector {
   }
 
   def fetchNextCursor():String = {
-    var nextCursor:String = ""
-    val latch = new CountDownLatch(1)
-    val nextVal:FindObservable[String] = collection_meta.find(nextDocFinder)
-    nextVal.subscribe(new Observer[String]{
-      override def onNext(result: String): Unit = { nextCursor = result; latch.countDown()}
-      override def onError(e: Throwable): Unit = println(" \n\nFailed " + e + "\n\n")
-      override def onComplete(): Unit = println("Completed")
-    })
-    latch.await()
-    nextCursor
+    val doc:Document = Document("nextcursor" -> BsonRegularExpression(".*"))
+    MongoHelpers.findStringValSync(collection_meta,doc)
   }
 
   def writeNextCursor(next:String) = {
     //first remove
-    MongoHelpers.deleteSync(collection_meta,nextDocFinder)
-    val doc: Document = Document("nextcursor" -> next)
-    val observable: Observable[Completed] = collection_meta.insertOne(doc)
+    var doc:Document = Document("nextcursor" -> BsonRegularExpression(".*"))
+    MongoHelpers.deleteSync(collection_meta,doc)
+    doc = Document("nextcursor" -> next)
+    MongoHelpers.insertSync(collection_meta,doc)
   }
   def fetchCount() = {
-    val latch = new CountDownLatch(1)
-    var numDocs:Long = 0
-    val observablecount:Observable[Long] = collection.count()
-    observablecount.subscribe(new Observer[Long]{
-      override def onNext(result: Long): Unit = { numDocs = result ; latch.countDown()}
-      override def onError(e: Throwable): Unit = println(" \n\nFailed " + e + "\n\n")
-      override def onComplete(): Unit = println("Completed")
-    })
-    latch.await()
-    println("Number of docs = " + numDocs )
+    MongoHelpers.fetchCountSync(collection)
+
   }
   def insertTest={
     val doc: Document = Document("name" -> "MongoDB", "type" -> "database",
       "count" -> 1, "info" -> Document("x" -> 203, "y" -> 100))
-    val observable: Observable[Completed] = collection.insertOne(doc)
-    observable.subscribe(new Observer[Completed] {
-      override def onNext(result: Completed): Unit = println("Inserted")
-      override def onError(e: Throwable): Unit = println(" \n\nFailed " + e + "\n\n")
-      override def onComplete(): Unit = println("Completed")
-    })
+    MongoHelpers.insertSync(collection,doc)
   }
 
   def insert(disqusPost: DisqusPost = null): Unit ={
@@ -88,12 +71,13 @@ object MongoConnector {
     }
   }
 
-  def main(args:Array[String]) = {
+  def main(args:Array[String]):Unit = {
     connect("mongomaster")
-    fetchCount()
+    insertTest
+    val numDocs = fetchCount()
+    println(s"Num Docs : $numDocs")
+    val s = fetchNextCursor()
+    println("Next cursor " + s)
+    writeNextCursor("9013")
   }
-
-
-
-
 }

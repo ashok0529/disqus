@@ -17,6 +17,4 @@ package object ashok {
 
 
   val MONGO_HOST:String = "mongomaster"
-
-  val nextDocFinder:Document = Document("next" -> "/.*/")
 }

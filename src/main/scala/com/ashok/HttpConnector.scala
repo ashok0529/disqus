@@ -12,10 +12,13 @@ import scala.concurrent.{Await, Future}
   * Created by ashok on 8/2/16.
   */
 object HttpConnector {
+  var wsClient:WSClient=null
   def getWithPlay(url:String) = {
-    val config = new NingAsyncHttpClientConfigBuilder(DefaultWSClientConfig()).build()
-    val builder = new AsyncHttpClientConfig.Builder(config)
-    val wsClient:WSClient = new NingWSClient(builder.build())
+    if(wsClient == null){
+      val config = new NingAsyncHttpClientConfigBuilder(DefaultWSClientConfig()).build()
+      val builder = new AsyncHttpClientConfig.Builder(config)
+      wsClient= new NingWSClient(builder.build())
+    }
     /*
     val complexRequest: WSRequest =
       request.withHeaders("Accept" -> "application/json")
@@ -27,5 +30,6 @@ object HttpConnector {
 
     Json.parse(result.body)
     //Json.toJson(result.body)
+
   }
 }

@@ -25,15 +25,18 @@ object LoopConnector extends App {
           val nextCursor: String = MongoConnector.fetchNextCursor()
           var url = ""
           url += LIST_POSTS_URL
-          url += "/" + app.API_KEY
+          url += app.API_KEY
           if (!nextCursor.isEmpty) {
             url += "?cursor"
             url += nextCursor
           }
           Connector.getDataAndPersist(url)
         }
+
       }
-      Thread.sleep(System.currentTimeMillis()-t1)
+      val diff:Long = (3600*1000) - (System.currentTimeMillis()-t1)
+      println(s"Sleeping for $diff ms")
+      Util.sleep(diff)
       t1 = System.currentTimeMillis()
     }
 
