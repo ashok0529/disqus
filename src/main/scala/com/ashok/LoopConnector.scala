@@ -34,9 +34,9 @@ object LoopConnector extends App {
         }
 
       }
-      val diff:Long = (3600*1000) - (System.currentTimeMillis()-t1)
-      println(s"Sleeping for $diff ms")
-      Util.sleep(diff)
+      //val diff:Long = (3600*1000) - (System.currentTimeMillis()-t1)
+      //println(s"Sleeping for $diff ms")
+      Util.sleep(120*1000)
       t1 = System.currentTimeMillis()
     }
 

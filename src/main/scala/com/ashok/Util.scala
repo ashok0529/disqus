@@ -18,7 +18,7 @@ object Util {
     var app10:DisqusApp = DisqusApp("WEhUJvx0aGzwY4Ju8E4FgZJ6ZCriI1faTuR1Wttum1PWEytkFG9vESy3vPHuk1GV","Y4jVezdMEwjxVpKAmD1fZitSDwKHLP4RpSbPdxLzuRzeuKTLnToV33svsKa59Oc6")
 
     var apps: Vector[DisqusApp] = Vector()
-    apps = apps :+ app2 :+ app1
+    apps = apps :+ app1 :+ app2 :+ app3  :+ app4 :+ app5 :+ app6 :+ app7 :+ app7 :+app8 :+ app9 :+ app10
     apps
   }
 

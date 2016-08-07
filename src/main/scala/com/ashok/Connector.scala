@@ -67,15 +67,19 @@ object Connector extends App{
           var authorId:String = ""
           var aboutAuthor:String = ""
           var authorName:String = ""
+          var reputation:String = ""
+          var location:String = ""
           if(authorNode != null){
             userName = authorNode.get("username").asText("Unknown")
             profileURL = authorNode.get("profileUrl").asText("Unknown")
             authorId = authorNode.get("id").asText("0")
             aboutAuthor= authorNode.get("about").asText("")
             authorName = authorNode.get("name").asText("")
+            reputation = authorNode.get("reputation").asText("")
+            location=authorNode.get("location").asText("")
           }
           val df:DisqusPost = DisqusPost(forum,isDeleted, isFlagged,dislikes,message,createdAt,
-            userName,profileURL,authorId,aboutAuthor,authorName)
+            userName,profileURL,authorId,aboutAuthor,authorName,reputation,location)
 
           println("*********DISQUS POST**********" + df.toString)
           val mongoDoc = df.getMongoDoc
